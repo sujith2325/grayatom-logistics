@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # GreyAtom Logistics - Delivery Exception Management Dashboard
 
 A professional, fully functional internal operations dashboard built with **Vanilla HTML, CSS, and JavaScript**. Designed for logistics managers to track and resolve delivery issues in real-time.
@@ -50,3 +51,7 @@ greyatom-dashboard/
 - User authentication and role-based access.
 - PDF generation for individual exception reports.
 - Real-time notifications via WebSockets.
+=======
+# grayatom-logistics
+Professional logistics operations dashboard for GreyAtom Logistics built using Vanilla HTML, CSS, and JavaScript with LocalStorage-based data management..
+>>>>>>> e151325bd9544d4717624b60224fc0ba9c63f389
