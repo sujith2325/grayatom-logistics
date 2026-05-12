@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Exceptions | GreyAtom Logistics</title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            </div>
+            <span class="company-name">GreyAtom Logistics</span>
+        </div>
+        <nav class="nav-links">
+            <li class="nav-item"><a href="../index.html" class="nav-link">Dashboard</a></li>
+            <li class="nav-item"><a href="exceptions.html" class="nav-link active">Exceptions</a></li>
+            <li class="nav-item"><a href="analytics.html" class="nav-link">Analytics</a></li>
+        </nav>
+    </aside>
+
+    <main class="main-wrapper">
+        <header class="navbar">
+            <div class="search-bar">
+                <input type="text" id="main-search" placeholder="Search exceptions...">
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+                <div class="user-profile flex items-center gap-2">
+                    <div style="width: 35px; height: 35px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem;"></div>
+                    <span style="font-weight: 500; font-size: 0.9rem;"></span>
+                </div>
+                <button id="logout-btn" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Logout</button>
+            </div>
+        </header>
+
+        <div class="content-container">
+            <div class="flex justify-between items-center mt-4" style="margin-bottom: 2rem;">
+                <h1 style="font-size: 1.5rem; font-weight: 700;">Delivery Exceptions</h1>
+                <div class="flex gap-2">
+                    <button class="btn btn-outline" id="export-pdf" style="color: var(--danger); border-color: var(--danger);">Export PDF</button>
+                    <button class="btn btn-outline" id="export-csv">Export CSV</button>
+                    <button class="btn btn-primary" id="open-add-modal">Log Exception</button>
+                </div>
+            </div>
+
+            <!-- Filters Bar -->
+            <div class="card" style="padding: 1rem;">
+                <div class="flex gap-2 items-center flex-wrap">
+                    <select class="btn btn-outline" id="filter-status">
+                        <option value="all">All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Resolved">Resolved</option>
+                    </select>
+                    <select class="btn btn-outline" id="filter-priority">
+                        <option value="all">All Priority</option>
+                        <option value="Critical">Critical</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                    <button class="btn btn-outline" id="reset-filters">Clear</button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="card">
+                <div class="table-responsive">
+                    <table id="exceptions-table">
+                        <thead>
+                            <tr>
+                                <th>Tracking ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Partner</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody><!-- Injected by JS --></tbody>
+                    </table>
+                </div>
+                <div id="empty-state" style="display: none; text-align: center; padding: 3rem;">
+                    <p style="color: var(--text-muted);">No matching exceptions found.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: Add/Edit Exception -->
+    <div class="modal-overlay" id="exception-modal">
+        <div class="modal-content">
+            <h2 id="modal-title" style="margin-bottom: 1.5rem;">Log New Exception</h2>
+            <form id="exception-form">
+                <input type="hidden" id="edit-id">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="display: block; font-size: 0.8rem; margin-bottom: 0.3rem;">Tracking ID *</label>
+                        <input type="text" id="form-tracking-id" required style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-main);">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.8rem; margin-bottom: 0.3rem;">Customer Name *</label>
+                        <input type="text" id="form-customer" required style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-main);">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="display: block; font-size: 0.8rem; margin-bottom: 0.3rem;">Delivery Partner</label>
+                        <select id="form-partner" style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-main);">
+                            <option>BlueDart</option><option>FedEx</option><option>DHL</option><option>Delhivery</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.8rem; margin-bottom: 0.3rem;">Priority</label>
+                        <select id="form-priority" style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-main);">
+                            <option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.8rem; margin-bottom: 0.3rem;">Issue Description</label>
+                    <textarea id="form-desc" rows="3" style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-main);"></textarea>
+                </div>
+                <div id="status-field" style="margin-bottom: 1.5rem; display: none;">
+                    <label style="display: block; font-size: 0.8rem; margin-bottom: 0.3rem;">Status</label>
+                    <select id="form-status" style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-main);">
+                        <option>Pending</option><option>Resolved</option>
+                    </select>
+                </div>
+                <div class="flex justify-between" style="align-items: center;">
+                    <button type="button" class="btn btn-outline" id="download-pdf-btn" style="display: none; border-color: var(--danger); color: var(--danger);">Download Report (PDF)</button>
+                    <div style="margin-left: auto; display: flex; gap: 1rem;">
+                        <button type="button" class="btn btn-outline" id="close-modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="save-btn">Save Exception</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        if (AuthManager.requireAuth(['admin', 'user'])) {
+            const currentUser = AuthManager.getCurrentUser();
+            
+            // Adjust Sidebar for user role
+            if (currentUser.role === 'user') {
+                const analyticsLink = document.querySelector('a[href="analytics.html"]');
+                if (analyticsLink) analyticsLink.parentElement.style.display = 'none';
+                const dashboardLink = document.querySelector('a[href="../index.html"]');
+                if (dashboardLink) dashboardLink.href = 'user-dashboard.html';
+            }
+
+            const tableBody = document.querySelector('#exceptions-table tbody');
+            const modal = document.getElementById('exception-modal');
+            const form = document.getElementById('exception-form');
+            
+            let exceptions = StorageManager.getExceptions();
+            let filteredExceptions = [...exceptions];
+
+            function renderTable() {
+                tableBody.innerHTML = '';
+                if (filteredExceptions.length === 0) {
+                    document.getElementById('empty-state').style.display = 'block';
+                    return;
+                }
+                document.getElementById('empty-state').style.display = 'none';
+
+                filteredExceptions.forEach(ex => {
+                    const tr = document.createElement('tr');
+                    
+                    // Conditionally render the delete button based on role
+                    const deleteBtn = currentUser.role === 'admin' ? 
+                        `<button class="btn btn-outline" style="padding: 0.3rem 0.6rem; color: var(--danger); border-color: var(--danger);" onclick="deleteException('${ex.id}')">Delete</button>` : '';
+
+                    tr.innerHTML = `
+                        <td><strong>${ex.id}</strong></td>
+                        <td>${ex.customerName}</td>
+                        <td>${ex.date}</td>
+                        <td>${ex.partner}</td>
+                        <td><span class="badge badge-${ex.priority.toLowerCase()}">${ex.priority}</span></td>
+                        <td><span class="badge badge-${ex.status.toLowerCase()}">${ex.status}</span></td>
+                        <td>
+                            <button class="btn btn-outline" style="padding: 0.3rem 0.6rem;" onclick="editException('${ex.id}')">Edit</button>
+                            ${deleteBtn}
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+            }
+
+        function applyFilters() {
+            const search = document.getElementById('main-search').value.toLowerCase();
+            const status = document.getElementById('filter-status').value;
+            const priority = document.getElementById('filter-priority').value;
+
+            filteredExceptions = exceptions.filter(ex => {
+                const matchesSearch = ex.id.toLowerCase().includes(search) || ex.customerName.toLowerCase().includes(search);
+                const matchesStatus = status === 'all' || ex.status === status;
+                const matchesPriority = priority === 'all' || ex.priority === priority;
+                return matchesSearch && matchesStatus && matchesPriority;
+            });
+            renderTable();
+        }
+
+            window.editException = (id) => {
+                const ex = exceptions.find(e => e.id === id);
+                if (!ex) return;
+                document.getElementById('edit-id').value = ex.id;
+                document.getElementById('form-tracking-id').value = ex.id;
+                document.getElementById('form-tracking-id').readOnly = true;
+                document.getElementById('form-customer').value = ex.customerName;
+                document.getElementById('form-partner').value = ex.partner;
+                document.getElementById('form-priority').value = ex.priority;
+                document.getElementById('form-desc').value = ex.description;
+                document.getElementById('form-status').value = ex.status;
+                document.getElementById('status-field').style.display = 'block';
+                document.getElementById('modal-title').textContent = 'Edit Exception';
+                document.getElementById('download-pdf-btn').style.display = 'block';
+                
+                // Attach specific exception details to download button
+                document.getElementById('download-pdf-btn').onclick = () => {
+                    const content = document.createElement('div');
+                    content.innerHTML = `
+                        <div style="padding: 2rem; font-family: sans-serif;">
+                            <h2>Delivery Exception Report</h2>
+                            <hr style="margin-bottom: 1rem;">
+                            <p><strong>Tracking ID:</strong> ${ex.id}</p>
+                            <p><strong>Customer:</strong> ${ex.customerName}</p>
+                            <p><strong>Date:</strong> ${ex.date}</p>
+                            <p><strong>Partner:</strong> ${ex.partner}</p>
+                            <p><strong>Priority:</strong> ${ex.priority}</p>
+                            <p><strong>Status:</strong> ${ex.status}</p>
+                            <div style="margin-top: 1rem;">
+                                <strong>Issue Description:</strong>
+                                <p style="padding: 1rem; background: #f1f5f9; color: #333; border-radius: 4px;">${ex.description}</p>
+                            </div>
+                        </div>
+                    `;
+                    const opt = {
+                        margin: 1,
+                        filename: `Report_${ex.id}.pdf`,
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2 },
+                        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                    };
+                    html2pdf().set(opt).from(content).save();
+                };
+                
+                modal.style.display = 'flex';
+            };
+
+        window.deleteException = (id) => {
+            if (confirm(`Are you sure you want to delete exception ${id}?`)) {
+                StorageManager.deleteException(id);
+                exceptions = StorageManager.getExceptions();
+                applyFilters();
+                Notification.show('Exception deleted successfully', 'error');
+            }
+        };
+
+            document.getElementById('open-add-modal').addEventListener('click', () => {
+                form.reset();
+                document.getElementById('edit-id').value = '';
+                document.getElementById('form-tracking-id').readOnly = false;
+                document.getElementById('status-field').style.display = 'none';
+                document.getElementById('download-pdf-btn').style.display = 'none';
+                document.getElementById('modal-title').textContent = 'Log New Exception';
+                modal.style.display = 'flex';
+            });
+
+        document.getElementById('close-modal').addEventListener('click', () => modal.style.display = 'none');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('edit-id').value;
+            const data = {
+                id: document.getElementById('form-tracking-id').value,
+                customerName: document.getElementById('form-customer').value,
+                partner: document.getElementById('form-partner').value,
+                priority: document.getElementById('form-priority').value,
+                description: document.getElementById('form-desc').value,
+                status: id ? document.getElementById('form-status').value : 'Pending',
+                date: id ? exceptions.find(ex => ex.id === id).date : new Date().toISOString().split('T')[0]
+            };
+
+            if (id) {
+                StorageManager.updateException(data);
+                Notification.show('Exception updated successfully', 'success');
+            } else {
+                if (exceptions.some(ex => ex.id === data.id)) {
+                    alert('Tracking ID already exists!');
+                    return;
+                }
+                StorageManager.addException(data);
+                Notification.show('New exception logged', 'success');
+            }
+
+            modal.style.display = 'none';
+            exceptions = StorageManager.getExceptions();
+            applyFilters();
+        });
+
+        document.getElementById('main-search').addEventListener('input', applyFilters);
+        document.getElementById('filter-status').addEventListener('change', applyFilters);
+        document.getElementById('filter-priority').addEventListener('change', applyFilters);
+        document.getElementById('reset-filters').addEventListener('click', () => {
+            document.getElementById('main-search').value = '';
+            document.getElementById('filter-status').value = 'all';
+            document.getElementById('filter-priority').value = 'all';
+            applyFilters();
+        });
+
+        document.getElementById('export-csv').addEventListener('click', () => {
+            const headers = ['Tracking ID', 'Customer', 'Date', 'Partner', 'Priority', 'Status'];
+            const rows = filteredExceptions.map(ex => [ex.id, ex.customerName, ex.date, ex.partner, ex.priority, ex.status]);
+            let csv = headers.join(',') + '\n' + rows.map(r => r.join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'exceptions_export.csv';
+            a.click();
+        });
+
+            document.getElementById('export-pdf').addEventListener('click', () => {
+                const element = document.getElementById('exceptions-table').cloneNode(true);
+                // Remove the action column for PDF
+                const ths = element.querySelectorAll('th');
+                if (ths.length > 0) ths[ths.length - 1].remove();
+                const trs = element.querySelectorAll('tbody tr');
+                trs.forEach(tr => {
+                    const tds = tr.querySelectorAll('td');
+                    if (tds.length > 0) tds[tds.length - 1].remove();
+                });
+                
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = `
+                    <style>
+                        table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; color: #333; }
+                        .badge { padding: 4px 8px; border-radius: 12px; font-weight: bold; }
+                    </style>
+                    <h2 style="font-family: sans-serif; color: #333;">Exceptions Report</h2>
+                `;
+                wrapper.appendChild(element);
+
+                const opt = {
+                    margin: 0.5,
+                    filename: 'exceptions_report.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
+                };
+                html2pdf().set(opt).from(wrapper).save();
+            });
+
+            // Check if redirected with ?action=new
+            if (new URLSearchParams(window.location.search).get('action') === 'new') {
+                document.getElementById('open-add-modal').click();
+            }
+
+            renderTable();
+        }
+    </script>
+</body>
+</html>

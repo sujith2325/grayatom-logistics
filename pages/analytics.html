@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics | GreyAtom Logistics</title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        @media (max-width: 768px) {
+            .analytics-grid { grid-template-columns: 1fr; }
+        }
+        .chart-container {
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .donut-label {
+            position: absolute;
+            text-align: center;
+        }
+        .donut-label .val { font-size: 1.5rem; font-weight: 700; }
+        .donut-label .txt { font-size: 0.8rem; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            </div>
+            <span class="company-name">GreyAtom Logistics</span>
+        </div>
+        <nav class="nav-links">
+            <li class="nav-item"><a href="../index.html" class="nav-link">Dashboard</a></li>
+            <li class="nav-item"><a href="exceptions.html" class="nav-link">Exceptions</a></li>
+            <li class="nav-item"><a href="analytics.html" class="nav-link active">Analytics</a></li>
+        </nav>
+    </aside>
+
+    <main class="main-wrapper">
+        <header class="navbar">
+            <h2 style="font-size: 1.1rem; font-weight: 600;">System Analytics</h2>
+            <div class="nav-actions">
+                <button class="theme-toggle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+                <div class="user-profile flex items-center gap-2">
+                    <div style="width: 35px; height: 35px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem;"></div>
+                    <span style="font-weight: 500; font-size: 0.9rem;"></span>
+                </div>
+                <button id="logout-btn" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Logout</button>
+            </div>
+        </header>
+
+        <div class="content-container fade-in">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Avg. Resolution Time</span>
+                    <span class="stat-value">14.2 hrs</span>
+                    <span class="stat-trend trend-up">2.1 hrs faster than avg</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Efficiency Score</span>
+                    <span class="stat-value">94.8%</span>
+                    <span class="stat-trend trend-up">+0.5% this month</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Partner Compliance</span>
+                    <span class="stat-value">88.0%</span>
+                    <span class="stat-trend trend-down">-1.2% this month</span>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <!-- Status Distribution (Donut) -->
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">Resolution Status</h3></div>
+                    <div class="chart-container" id="status-donut-container">
+                        <svg width="200" height="200" viewBox="0 0 42 42" class="donut">
+                            <circle class="donut-hole" cx="21" cy="21" r="15.91549430918954" fill="transparent"></circle>
+                            <circle class="donut-ring" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--border)" stroke-width="3"></circle>
+                            <circle id="donut-segment" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--success)" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+                        </svg>
+                        <div class="donut-label">
+                            <div class="val" id="resolution-rate">0%</div>
+                            <div class="txt">Resolved</div>
+                        </div>
+                    </div>
+                    <div id="status-legend" style="display: flex; justify-content: center; gap: 1rem; font-size: 0.8rem; margin-top: 1rem;">
+                        <span style="display: flex; items-center gap: 0.5rem;"><div style="width: 10px; height: 10px; border-radius: 2px; background: var(--success);"></div> Resolved</span>
+                        <span style="display: flex; items-center gap: 0.5rem;"><div style="width: 10px; height: 10px; border-radius: 2px; background: var(--border);"></div> Pending</span>
+                    </div>
+                </div>
+
+                <!-- Partner Performance (Bar Chart) -->
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">Issues by Partner</h3></div>
+                    <div id="partner-bar-container" style="padding-top: 1rem;">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Issues over time (Line Chart view) -->
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Monthly Trend Analysis</h3></div>
+                <div id="trend-line-container" style="height: 250px; width: 100%; margin-top: 1rem;">
+                    <!-- Line Chart Injected by JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../script.js"></script>
+    <script>
+        if (AuthManager.requireAuth(['admin'])) {
+            document.addEventListener('DOMContentLoaded', () => {
+                const exceptions = StorageManager.getExceptions();
+            
+            // 1. Resolution Rate (Donut)
+            const total = exceptions.length;
+            const resolved = exceptions.filter(ex => ex.status === 'Resolved').length;
+            const rate = total > 0 ? Math.round((resolved / total) * 100) : 0;
+            
+            const segment = document.getElementById('donut-segment');
+            segment.setAttribute('stroke-dasharray', `${rate} ${100 - rate}`);
+            document.getElementById('resolution-rate').textContent = `${rate}%`;
+
+            // 2. Partner Bar Chart
+            const partners = ['BlueDart', 'FedEx', 'DHL', 'Delhivery'];
+            const pCounts = partners.map(p => exceptions.filter(ex => ex.partner === p).length);
+            const pMax = Math.max(...pCounts, 1);
+            
+            const pContainer = document.getElementById('partner-bar-container');
+            let barsHtml = '';
+            partners.forEach((p, i) => {
+                const width = (pCounts[i] / pMax) * 100;
+                barsHtml += `
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.3rem;">
+                            <span>${p}</span>
+                            <span style="font-weight: 600;">${pCounts[i]}</span>
+                        </div>
+                        <div style="height: 8px; background: var(--bg-main); border-radius: 4px; overflow: hidden;">
+                            <div style="height: 100%; width: ${width}%; background: var(--primary); transition: width 1s;"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            pContainer.innerHTML = barsHtml;
+
+            // 3. Trend Line Chart (Dynamic from data)
+            const grouped = {};
+            exceptions.forEach(ex => {
+                if (!ex.date) return;
+                const date = new Date(ex.date);
+                if (isNaN(date.getTime())) return;
+                const key = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0');
+                const monthStr = date.toLocaleString('default', { month: 'short' });
+                if(!grouped[key]) grouped[key] = { key, month: monthStr, issues: 0 };
+                grouped[key].issues++;
+            });
+            let trendData = Object.values(grouped).sort((a, b) => a.key.localeCompare(b.key));
+            
+            if (trendData.length < 2) {
+                // Ensure at least 2 points for a line chart
+                trendData = [
+                    { month: 'Prev', issues: 0 },
+                    ...(trendData.length ? trendData : [{ month: 'Curr', issues: 0 }])
+                ];
+            }
+            // Limit to last 6 periods
+            if (trendData.length > 6) {
+                trendData = trendData.slice(trendData.length - 6);
+            }
+
+            const maxIssues = Math.max(...trendData.map(d => d.issues), 5) + 2;
+            const w = 800;
+            const h = 250;
+            const pPadding = 40;
+            
+            const points = trendData.map((d, i) => {
+                const x = pPadding + (i * ((w - pPadding * 2) / (trendData.length - 1)));
+                const y = h - pPadding - ((d.issues / maxIssues) * (h - pPadding * 2));
+                return `${x},${y}`;
+            }).join(' ');
+
+            let elementsHtml = '';
+            trendData.forEach((d, i) => {
+                const x = pPadding + (i * ((w - pPadding * 2) / (trendData.length - 1)));
+                const y = h - pPadding - ((d.issues / maxIssues) * (h - pPadding * 2));
+                
+                // Add vertical grid line
+                elementsHtml += `<line x1="${x}" y1="${h - pPadding}" x2="${x}" y2="${pPadding}" stroke="var(--border)" stroke-width="1" stroke-dasharray="4" />`;
+                
+                // Data point circle & labels
+                elementsHtml += `<circle cx="${x}" cy="${y}" r="6" fill="var(--bg-card)" stroke="var(--primary)" stroke-width="3" />`;
+                elementsHtml += `<text x="${x}" y="${y - 15}" fill="var(--text-main)" font-size="14" font-weight="600" text-anchor="middle">${d.issues}</text>`;
+                elementsHtml += `<text x="${x}" y="${h - 10}" fill="var(--text-muted)" font-size="14" text-anchor="middle">${d.month}</text>`;
+            });
+
+            document.getElementById('trend-line-container').innerHTML = `
+                <svg width="100%" height="100%" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet">
+                    <!-- X Axis Line -->
+                    <line x1="${pPadding}" y1="${h - pPadding}" x2="${w - pPadding}" y2="${h - pPadding}" stroke="var(--border)" stroke-width="2" />
+                    <!-- The Line -->
+                    <polyline fill="none" stroke="var(--primary)" stroke-width="4" points="${points}" stroke-linejoin="round" />
+                    ${elementsHtml}
+                </svg>
+            `;
+            });
+        }
+    </script>
+</body>
+</html>

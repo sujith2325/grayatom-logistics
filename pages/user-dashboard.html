@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard | GreyAtom Logistics</title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            </div>
+            <span class="company-name">GreyAtom Logistics</span>
+        </div>
+        <nav class="nav-links">
+            <li class="nav-item"><a href="user-dashboard.html" class="nav-link active">My Dashboard</a></li>
+            <li class="nav-item"><a href="exceptions.html" class="nav-link">My Exceptions</a></li>
+        </nav>
+        <div class="sidebar-footer">
+            v1.0.4 &copy; 2023 GreyAtom
+        </div>
+    </aside>
+
+    <main class="main-wrapper">
+        <header class="navbar">
+            <div class="search-bar">
+                <input type="text" placeholder="Search my exceptions...">
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle" title="Toggle Dark Mode">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+                <div class="user-profile flex items-center gap-2">
+                    <div style="width: 35px; height: 35px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem;">US</div>
+                    <span style="font-weight: 500; font-size: 0.9rem;">User</span>
+                </div>
+                <button id="logout-btn" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Logout</button>
+            </div>
+        </header>
+
+        <div class="content-container fade-in">
+            <div class="flex justify-between items-center mt-4" style="margin-bottom: 2rem;">
+                <div>
+                    <h1 style="font-size: 1.5rem; font-weight: 700;">My Dashboard</h1>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Here is a summary of your assigned exceptions.</p>
+                </div>
+                <button class="btn btn-primary" onclick="window.location.href='exceptions.html?action=new'">
+                    Log Exception
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">My Assigned</span>
+                    <span class="stat-value" id="my-assigned">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">My Resolved</span>
+                    <span class="stat-value" id="my-resolved" style="color: var(--success);">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">My Pending</span>
+                    <span class="stat-value" id="my-pending" style="color: var(--warning);">0</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">My Recent Exceptions</h3>
+                    <button class="btn btn-outline" onclick="window.location.href='exceptions.html'">View All</button>
+                </div>
+                <div class="table-responsive">
+                    <table id="my-exceptions-table">
+                        <thead>
+                            <tr>
+                                <th>Tracking ID</th>
+                                <th>Customer</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../script.js"></script>
+    <script>
+        if (AuthManager.requireAuth(['user'])) {
+            document.addEventListener('DOMContentLoaded', () => {
+                const currentUser = AuthManager.getCurrentUser();
+                
+                // For demonstration, we assume exceptions matching currentUser.name in assignedTo or just pick random subset
+                const allExceptions = StorageManager.getExceptions();
+                // Since our dummy data has specific assignedTo names, let's just show all for the demo,
+                // but in a real app it would be: allExceptions.filter(ex => ex.assignedTo === currentUser.name);
+                // For now we'll pretend all exceptions are "theirs" or filter if we want:
+                const myExceptions = allExceptions; // Replace with proper filter in real system
+                
+                document.getElementById('my-assigned').textContent = myExceptions.length;
+                document.getElementById('my-resolved').textContent = myExceptions.filter(ex => ex.status === 'Resolved').length;
+                document.getElementById('my-pending').textContent = myExceptions.filter(ex => ex.status === 'Pending').length;
+                
+                const tableBody = document.querySelector('#my-exceptions-table tbody');
+                myExceptions.slice(0, 5).forEach(ex => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${ex.id}</strong></td>
+                        <td>${ex.customerName}</td>
+                        <td><span class="badge badge-${ex.priority.toLowerCase()}">${ex.priority}</span></td>
+                        <td><span class="badge badge-${ex.status.toLowerCase()}">${ex.status}</span></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

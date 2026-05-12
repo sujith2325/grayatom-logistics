@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreyAtom Logistics | Exception Management</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Auth View (Login & Register) -->
+    <section id="auth-view" class="auth-container active">
+        <!-- Login Card -->
+        <div id="login-card" class="card auth-card">
+            <div class="auth-header">
+                <div class="logo" style="justify-content: center; margin-bottom: 1rem;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                </div>
+                <h2>Internal Operations Login</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">GreyAtom Logistics Pvt. Ltd.</p>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email Address</label>
+                    <input type="email" id="login-email" placeholder="admin@greyatom.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            </form>
+            <div class="auth-toggle">
+                Don't have an account? <a href="#" id="go-to-register">Register here</a>
+            </div>
+        </div>
+
+        <!-- Register Card (Hidden by default) -->
+        <div id="register-card" class="card auth-card" style="display: none;">
+            <div class="auth-header">
+                <h2>Create Account</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Join the Operations Team</p>
+            </div>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="reg-name">Full Name</label>
+                    <input type="text" id="reg-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email Address</label>
+                    <input type="email" id="reg-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Register</button>
+            </form>
+            <div class="auth-toggle">
+                Already have an account? <a href="#" id="go-to-login">Sign in instead</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard View (Protected) -->
+    <section id="dashboard-view">
+        <header class="app-header">
+            <div class="container">
+                <div class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>GreyAtom Logistics</span>
+                </div>
+                <div class="user-menu">
+                    <button class="theme-btn" id="theme-toggle" title="Toggle Theme">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="theme-icon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                    <div class="user-info">
+                        <div class="user-name" id="display-name">Admin User</div>
+                        <div class="user-role">Operations Manager</div>
+                    </div>
+                    <button id="logout-btn" class="btn btn-outline logout-btn">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="container main-content">
+            <div class="dashboard-header">
+                <h1 id="dashboard-title">Delivery Exception Management</h1>
+                <p>Log, track, and resolve delivery issues across all cities.</p>
+            </div>
+
+            <div class="stats-bar">
+                <div class="stat-card">
+                    <span class="stat-label">Total Open</span>
+                    <span class="stat-value" id="open-count">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Total Resolved</span>
+                    <span class="stat-value" id="resolved-count">0</span>
+                </div>
+            </div>
+
+            <div class="grid-layout">
+                <section class="form-section card">
+                    <h2 class="card-title">Report New Exception</h2>
+                    <form id="exception-form">
+                        <div class="form-group">
+                            <label for="delivery-id">Delivery ID *</label>
+                            <input type="text" id="delivery-id" required placeholder="e.g. DEL-12345">
+                        </div>
+                        <div class="form-group">
+                            <label for="customer-name">Customer Name *</label>
+                            <input type="text" id="customer-name" required placeholder="Full Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="issue-type">Issue Type *</label>
+                            <select id="issue-type" required>
+                                <option value="" disabled selected>Select an issue type</option>
+                                <option>Address Not Found</option>
+                                <option>Customer Not Available</option>
+                                <option>Payment Issue</option>
+                                <option>Package Damaged</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Priority *</label>
+                            <div class="radio-group">
+                                <label class="radio-label"><input type="radio" name="priority" value="Low" required><span>Low</span></label>
+                                <label class="radio-label"><input type="radio" name="priority" value="Medium"><span>Medium</span></label>
+                                <label class="radio-label"><input type="radio" name="priority" value="High"><span>High</span></label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">Notes (Optional)</label>
+                            <textarea id="notes" rows="3" placeholder="Additional details..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Log Exception</button>
+                    </form>
+                </section>
+
+                <section class="table-section card">
+                    <div class="table-header">
+                        <h2 class="card-title">Active Exceptions</h2>
+                        <div class="filters">
+                            <select id="filter-type">
+                                <option value="all">All Issue Types</option>
+                                <option>Address Not Found</option>
+                                <option>Customer Not Available</option>
+                                <option>Payment Issue</option>
+                                <option>Package Damaged</option>
+                            </select>
+                            <select id="filter-status">
+                                <option value="all">All Status</option>
+                                <option>Open</option>
+                                <option>Resolved</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Delivery ID</th>
+                                    <th>Customer Name</th>
+                                    <th>Issue Type</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body"></tbody>
+                        </table>
+                    </div>
+                    <div id="empty-msg" class="empty-message">No exceptions reported yet.</div>
+                </section>
+            </div>
+        </main>
+    </section>
+
+    <footer class="app-footer">
+        <p>&copy; 2024 GreyAtom Logistics Pvt. Ltd. | Internal Operations Dashboard v2.0</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
